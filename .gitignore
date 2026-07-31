@@ -1,0 +1,6 @@
+# Von Typst erzeugt
+*.pdf
+
+# Editor / System
+.DS_Store
+*.swp
