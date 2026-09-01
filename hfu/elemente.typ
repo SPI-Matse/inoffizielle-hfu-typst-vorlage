@@ -21,26 +21,36 @@
 }
 
 // §2.6: Jede Abbildung wird beschriftet, die Beschriftung steht unterhalb.
-#let abbildung(inhalt, caption: none, quelle: none) = mit-quelle(
-  figure(inhalt, caption: caption, kind: image, supplement: [Abbildung]),
-  quelle,
-  zusammenhalten: true,
-)
+#let abbildung(inhalt, caption: none, quelle: none) = {
+  if caption == none {
+    panic("hfu-vorlage: Jede Abbildung benötigt nach §2.6 eine `caption`.")
+  }
+  mit-quelle(
+    figure(inhalt, caption: caption, kind: image, supplement: [Abbildung]),
+    quelle,
+    zusammenhalten: true,
+  )
+}
 
 // §2.7: Tabellen werden ausschließlich abgesetzt eingebunden, beschriftet wird
 // unterhalb. Tabelle 2: Tabelleninhalt 10 pt.
-#let tabelle(caption: none, quelle: none, ..args) = mit-quelle(
-  figure(
-    {
-      set text(size: cfg.groesse.tabelle)
-      table(..args)
-    },
-    caption: caption,
-    kind: table,
-    supplement: [Tabelle],
-  ),
-  quelle,
-)
+#let tabelle(caption: none, quelle: none, ..args) = {
+  if caption == none {
+    panic("hfu-vorlage: Jede Tabelle benötigt nach §2.7 eine `caption`.")
+  }
+  mit-quelle(
+    figure(
+      {
+        set text(size: cfg.groesse.tabelle)
+        table(..args)
+      },
+      caption: caption,
+      kind: table,
+      supplement: [Tabelle],
+    ),
+    quelle,
+  )
+}
 
 // Zeilennummern nur in Quellcode-Listings, nicht in Code im Fließtext.
 #let mit-zeilennummern(body) = {
@@ -74,7 +84,9 @@
 
 // Quellcode aus einer Datei in code/ — der Code bleibt dadurch ausführbar
 // und wird nicht in die Arbeit hineinkopiert:
-//   #quellcode-datei("/code/beispiel.py", lang: "python", caption: [Titel])
+//   #quellcode-datei(path("/code/beispiel.py"), lang: "python", caption: [Titel])
+// `path` löst den Pfad bereits im aufrufenden Projekt auf und funktioniert
+// dadurch später auch bei einem Import der Vorlage als Typst-Paket.
 #let quellcode-datei(pfad, lang: none, caption: none, zeilennummern: true) = quellcode(
   // Der abschließende Zeilenumbruch der Datei würde sonst als leere
   // nummerierte Zeile im Listing erscheinen.
@@ -103,6 +115,8 @@
 
 // §2.13: Die Monatsberichte sind Bestandteil des Anhangs. Sie werden als
 // PDF-Seite eingebunden, damit die Kopfzeile der Arbeit erhalten bleibt.
+// Bei einem späteren Paketimport muss `pfad` im Nutzerprojekt mit `path(…)`
+// erzeugt werden, damit die Datei nicht relativ zum Paket gesucht wird.
 #let monatsbericht(pfad, titel: none) = {
   if titel != none {
     heading(level: 2, numbering: none, titel)

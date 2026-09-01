@@ -9,6 +9,7 @@
 #import "kapitel.typ": auf-rechte-seite, kopfzeile, kopfzeile-marke
 #import "kapitel.typ": seitenzahl-neustart, trennblatt
 #import "kapitel.typ": unnummeriertes-kapitel, vorspann-kapitel
+#import "sperrvermerk.typ" as sperr
 #import "titelblatt.typ": titelblatt
 #import "verzeichnisse.typ": abbildungsverzeichnis, abkuerzungsverzeichnis
 #import "verzeichnisse.typ": inhaltsverzeichnis, quellcodeverzeichnis
@@ -20,6 +21,15 @@
     panic(
       "hfu-vorlage: `" + feld + "` muss in thesis.typ gesetzt sein (Richtlinie " + fundstelle + ").",
     )
+  }
+}
+
+// Erzeugt ein Verzeichnis nur, wenn im fertig gesetzten Dokument mindestens
+// ein passendes Element vorkommt. Entscheidend ist das Vorhandensein, nicht ob
+// das Element zusätzlich mit `@label` im Fließtext referenziert wird.
+#let verzeichnis-wenn-vorhanden(titel, ziel, erstellen, aktiv: true) = context {
+  if aktiv and query(ziel).len() > 0 {
+    vorspann-kapitel(titel, erstellen())
   }
 }
 
@@ -36,8 +46,12 @@
   ersetztes-modul: none,
   vorgelegt-am: none,
   autor: (:),
+  // Typografie — §1.3 schreibt keine konkrete Schriftfamilie vor
+  schrift: cfg.schrift,
+  schrift-mono: cfg.schrift-mono,
   // Bestandteile — Tabelle 3
   vorwort: none,
+  sperrvermerk: none,
   abstract-en: none,
   abstract-de: none,
   abkuerzungen: (),
@@ -49,12 +63,28 @@
   fehlt("studiengang", studiengang, "Tabelle 5")
   fehlt("titel", titel, "Tabelle 5")
   fehlt("referent", referent, "Tabelle 5")
+  if type(art) == str and lower(art).contains("bachelor") {
+    fehlt("korreferent", korreferent, "Tabelle 5")
+  }
   fehlt("autor.name", autor.at("name", default: none), "Tabelle 5")
   if vorgelegt-am == none {
     panic("hfu-vorlage: `vorgelegt-am` muss gesetzt sein (Richtlinie Tabelle 5).")
   }
   if abstract-de == none or abstract-en == none {
     panic("hfu-vorlage: Der Abstract ist in deutscher und englischer Sprache verpflichtend (Richtlinie §2.4).")
+  }
+  if quellen == none {
+    panic("hfu-vorlage: Das Literaturverzeichnis ist verpflichtend (Richtlinie Tabelle 3 und §2.9.5).")
+  }
+  if sperrvermerk != none {
+    if type(sperrvermerk) != dictionary {
+      panic("hfu-vorlage: `sperrvermerk` muss ein Dictionary mit `firma` und `variante` sein.")
+    }
+    fehlt("sperrvermerk.firma", sperrvermerk.at("firma", default: none), "Sperrvermerk")
+    let variante = sperrvermerk.at("variante", default: "bericht")
+    if type(variante) != str or not variante in ("bericht", "bachelorarbeit") {
+      panic("hfu-vorlage: `sperrvermerk.variante` muss `bericht` oder `bachelorarbeit` sein.")
+    }
   }
 
   set document(title: titel, author: autor.at("name"))
@@ -83,7 +113,7 @@
   // ergibt `leading` schriftunabhängig den in config.typ geforderten
   // Grundlinienabstand.
   set text(
-    font: cfg.schrift,
+    font: schrift,
     size: cfg.groesse.text,
     lang: "de",
     top-edge: 0.75em,
@@ -95,11 +125,9 @@
     spacing: cfg.absatzabstand, // §1.2.6
     first-line-indent: 0pt,
   )
-  show link: set text(font: cfg.schrift-mono, size: 0.9em)
-
   // ── Überschriften ─────────────────────────────────────────────────────────
   // Ebene 1 mit Punkt ("1. Einleitung"), Ebene 2 und 3 ohne ("1.1", "1.2.3") —
-  // so wie im Referenz-PDF der Fakultät.
+  // entsprechend den Darstellungsbeispielen der Richtlinie.
   set heading(numbering: (..n) => {
     let z = n.pos()
     if z.len() == 1 { numbering("1.", ..z) } else { numbering("1.1", ..z) }
@@ -120,7 +148,8 @@
   // Tabellen 7/8: fortlaufende Nummerierung, nicht kapitelweise (Typst-Standard)
 
   show footnote.entry: set text(size: cfg.groesse.fussnote) // Tabelle 2
-  show raw: set text(font: cfg.schrift-mono, size: cfg.groesse.quellcode)
+  // Nur Quellcode darf nach §1.3 eine zweite Monospace-Schrift verwenden.
+  show raw: set text(font: schrift-mono, size: cfg.groesse.quellcode)
 
   // ── 1. Titelblatt (ohne Seitenzahl, ohne Kopfzeile) ───────────────────────
   titelblatt(
@@ -134,6 +163,17 @@
     vorgelegt-am: vorgelegt-am,
     autor: autor,
   )
+
+  // Optionaler Sperrvermerk: unmittelbar nach dem Titelblatt, ohne Kopfzeile,
+  // Seitenzahl oder Eintrag im Inhaltsverzeichnis. Das anschließende leere
+  // Trennblatt vor Vorwort bzw. Abstract bleibt gemäß §2.2 erhalten.
+  if sperrvermerk != none {
+    sperr.sperrvermerk(
+      titel,
+      sperrvermerk.at("firma"),
+      variante: sperrvermerk.at("variante", default: "bericht"),
+    )
+  }
 
   // ── 2. Leeres Trennblatt (§2.2) ───────────────────────────────────────────
   trennblatt()
@@ -163,21 +203,24 @@
   )
 
   // Tabelle 3: verpflichtend, sofern Abbildungen bzw. Tabellen vorhanden sind.
-  context {
-    if query(figure.where(kind: image)).len() > 0 {
-      vorspann-kapitel("Abbildungsverzeichnis", abbildungsverzeichnis())
-    }
-  }
-  context {
-    if query(figure.where(kind: table)).len() > 0 {
-      vorspann-kapitel("Tabellenverzeichnis", tabellenverzeichnis())
-    }
-  }
-  context {
-    if cfg.quellcodeverzeichnis and query(figure.where(kind: "hfu-code")).len() > 0 {
-      vorspann-kapitel("Quellcodeverzeichnis", quellcodeverzeichnis())
-    }
-  }
+  verzeichnis-wenn-vorhanden(
+    "Abbildungsverzeichnis",
+    figure.where(kind: image),
+    abbildungsverzeichnis,
+  )
+  verzeichnis-wenn-vorhanden(
+    "Tabellenverzeichnis",
+    figure.where(kind: table),
+    tabellenverzeichnis,
+  )
+  // Nicht von der Richtlinie vorgesehen und deshalb nur bei expliziter
+  // Aktivierung; auch dann erscheint es nur, wenn Quellcode vorhanden ist.
+  verzeichnis-wenn-vorhanden(
+    "Quellcodeverzeichnis",
+    figure.where(kind: "hfu-code"),
+    quellcodeverzeichnis,
+    aktiv: cfg.quellcodeverzeichnis,
+  )
 
   vorspann-kapitel("Abkürzungsverzeichnis", abkuerzungsverzeichnis(abkuerzungen))
 

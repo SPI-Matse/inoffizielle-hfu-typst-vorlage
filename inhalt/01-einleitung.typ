@@ -31,10 +31,10 @@ ausschließlich Quellen, die auch im Text verwendet wurden.
 Direkte Zitate sind laut §3.6 sparsam einzusetzen. Zitate über zwei Zeilen
 werden abgesetzt:
 
-#zitat(quelle: [@weinberger2021, S. 27])[
-  Ein wörtliches Zitat erfolgt immer ohne jegliche Veränderung, im exakten
-  Wortlaut und in der Originalsprache. Mehrzeilige Zitate sind zusätzlich vom
-  Textkörper abzusetzen.
+#zitat(quelle: [Quelle und genaue Seitenzahl ergänzen])[
+  Dies ist ein Platzhalter für ein längeres direktes Zitat. Vor der Abgabe muss
+  er durch den unveränderten Wortlaut aus einer zitierfähigen Originalquelle
+  ersetzt und mit einer präzisen Fundstelle versehen werden.
 ]
 
 == Fußnoten

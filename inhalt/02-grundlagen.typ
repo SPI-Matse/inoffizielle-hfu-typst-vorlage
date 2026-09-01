@@ -3,8 +3,9 @@
 = Abbildungen, Tabellen und Quellcode
 
 Dieses Kapitel zeigt die Bausteine, die die Vorlage zusätzlich zum Fließtext
-bereitstellt. Alle drei erzeugen automatisch einen Eintrag im jeweiligen
-Verzeichnis.
+bereitstellt. Abbildungen und Tabellen erzeugen automatisch Einträge in ihren
+Verzeichnissen. Das zusätzliche Quellcodeverzeichnis ist nicht Teil der
+Richtlinie und deshalb standardmäßig deaktiviert.
 
 == Abbildungen
 
@@ -64,7 +65,7 @@ Längerer Quellcode gehört in den Ordner `code/` und wird von dort eingebunden.
 Der Code bleibt dadurch ausführbar und wird nicht in die Arbeit hineinkopiert:
 
 #quellcode-datei(
-  "/code/beispiel.py",
+  path("/code/beispiel.py"),
   lang: "python",
   caption: [Iterative Berechnung der Fibonacci-Zahlen],
 )

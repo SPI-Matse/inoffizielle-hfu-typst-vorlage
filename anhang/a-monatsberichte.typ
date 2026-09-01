@@ -1,7 +1,13 @@
 #import "../hfu/lib.typ": *
 
-Die während der Thesis-Erstellung anfallenden Monatsberichte sind laut §2.13
-Bestandteil des Anhangs. Sie werden als PDF-Seite eingebunden, damit die
-Kopfzeile der Arbeit erhalten bleibt.
-
-#monatsbericht("/anhang/berichte/monatsbericht-vorlage.pdf", titel: "Monatsbericht Januar")
+// Die Richtlinie ordnet die während der Thesis-Erstellung angefallenen
+// Monatsberichte dem Anhang zu. Eine offizielle PDF-Vorlage wird aus
+// urheberrechtlicher Vorsicht nicht mitgeliefert.
+//
+// Eigene Monatsberichte unter anhang/berichte/ ablegen und anschließend je
+// Datei einen Aufruf ergänzen, zum Beispiel:
+//
+// #monatsbericht(
+//   path("/anhang/berichte/2026-01.pdf"),
+//   titel: "Monatsbericht Januar 2026",
+// )

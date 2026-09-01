@@ -81,7 +81,7 @@
 
 // Kapitel des Vorspanns (Vorwort, Abstract, Verzeichnisse). Sie tragen keine
 // Kapitelnummer und beginnen — anders als Hauptkapitel — auf beliebiger Seite;
-// so hält es auch das Referenz-PDF der Fakultät.
+// die Rechtsseitenpflicht aus §1.2.3 bezieht sich auf Hauptkapitel.
 #let vorspann-kapitel(titel, body, im-inhaltsverzeichnis: true) = {
   pagebreak(weak: true)
   heading(level: 1, numbering: none, outlined: im-inhaltsverzeichnis, titel)

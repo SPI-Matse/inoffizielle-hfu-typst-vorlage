@@ -1,324 +1,270 @@
-# HFU-Typst-Vorlage für wissenschaftliche Arbeiten
+# Inoffizielle HFU-Typst-Vorlage für wissenschaftliche Arbeiten
 
-Typst-Vorlage für Haus-, Projekt- und Abschlussarbeiten an der **Fakultät
-Informatik der Hochschule Furtwangen**, umgesetzt nach der *Richtlinie für die
-Erstellung wissenschaftlicher Arbeiten* (Fakultät I, Januar 2024).
+Inoffizielle Typst-Vorlage für wissenschaftliche Arbeiten an der **Fakultät I
+(Informatik) der Hochschule Furtwangen**. Sie basiert auf der *Richtlinie für
+die Erstellung wissenschaftlicher Arbeiten*, Stand **Januar 2024**.
 
-Klonen, `typst watch thesis.typ` starten, schreiben. Ränder, Zeilenabstand,
-Kopfzeilen, Nummerierung, Verzeichnisse, Versicherung und Anhang sind fertig
-eingestellt.
-
-> **Diese Vorlage ist nicht offiziell.** Sie wurde privat erstellt und kann
-> Fehler enthalten. Die Verantwortung dafür, dass die Formalien der abgegebenen
-> Arbeit stimmen, liegt bei deren Verfasser:in. Im Zweifel gilt die Richtlinie,
-> nicht diese Vorlage.
-
-## Voraussetzungen
-
-| | | |
-|---|---|---|
-| **Typst** | zwingend | Entwickelt und geprüft mit **0.15.1**. Ältere Versionen ab 0.13 dürften funktionieren, sind aber nicht geprüft. |
-| **Schriften** | zwingend | Arial *oder* Liberation Sans, plus eine Monospace-Schrift. Siehe unten. |
-| **python3**, **pdftotext** | optional | Nur für `tests/pruefen.py`. `pdftotext` steckt im Paket `poppler-utils`. |
-
-### Typst installieren
-
-```bash
-# Arch Linux
-sudo pacman -S typst
-# Debian / Ubuntu
-sudo snap install typst
-# macOS
-brew install typst
-# Windows
-winget install --id Typst.Typst
-```
-
-Alternativ ohne Installation über [typst.app](https://typst.app) — dort das
-gesamte Projektverzeichnis hochladen, damit die relativen Pfade stimmen.
-
-### Schriften
-
-Die Richtlinie verlangt eine einheitliche Schriftart ohne Zier- oder
-Schmuckelemente (§1.3); die Richtlinie selbst ist in Arial gesetzt. Die Vorlage
-verwendet deshalb diese Kette:
-
-```
-Arial → Liberation Sans → Nimbus Sans → Helvetica
-```
-
-Liberation Sans ist metrikkompatibel zu Arial — der Text bricht also identisch
-um, egal welche der beiden greift. **Auf Windows und macOS ist Arial bereits
-vorhanden, hier ist nichts zu tun.** Unter Linux:
-
-```bash
-sudo pacman -S ttf-liberation        # Arch
-sudo apt install fonts-liberation    # Debian / Ubuntu
-```
-
-Für Quellcode: `Liberation Mono → DejaVu Sans Mono → Consolas → Menlo`. Mindestens
-eine davon ist praktisch überall installiert.
-
-Prüfen, was verfügbar ist:
-
-```bash
-typst fonts | grep -iE 'arial|liberation|nimbus sans|dejavu sans mono'
-```
-
-> **Warnungen wie `unknown font family: arial` sind normal.** Typst meldet jede
-> Schrift der Fallback-Kette, die auf diesem System fehlt — unter Linux also
-> Arial, unter Windows Liberation Sans. Solange *eine* Schrift der Kette
-> vorhanden ist, ist das Ergebnis korrekt.
+> [!IMPORTANT]
+> **Diese Vorlage ist ein privates, inoffizielles Drittprojekt. Sie stammt nicht
+> von der Hochschule Furtwangen, wurde von der HFU weder herausgegeben noch
+> geprüft oder freigegeben und darf nicht als offizielle HFU-Vorlage verstanden
+> werden.** Eine Gewähr für formale oder inhaltliche Richtigkeit wird nicht
+> übernommen. Nutzende handeln eigenverantwortlich und müssen vor der Abgabe
+> selbst prüfen, ob das erzeugte Dokument der aktuellen Richtlinie, der
+> jeweiligen SPO und den Vorgaben ihrer Betreuer:innen entspricht. Die Nutzung
+> erfolgt auf eigenes Risiko.
 
 ## Schnellstart
 
+Voraussetzung ist [Typst](https://github.com/typst/typst#installation) `0.15.1`
+oder neuer. Alternativ kann das Projekt vollständig in die
+[Typst-Web-App](https://typst.app/) hochgeladen werden.
+
+1. Über **[Use this template](https://github.com/SPI-Matse/inoffizielle-hfu-typst-vorlage/generate)**
+   ein eigenes GitHub-Repository erstellen.
+2. Das neue Repository klonen und die Vorschau starten:
+
+   ```bash
+   git clone https://github.com/DEIN-NAME/DEIN-REPOSITORY.git
+   cd DEIN-REPOSITORY
+   typst watch thesis.typ
+   ```
+
+3. Angaben und Wahlmöglichkeiten in `thesis.typ` anpassen.
+4. Deutsche und englische Abstract-Datei ausfüllen.
+5. Beispielkapitel ersetzen und Quellen in `literatur.bib` pflegen.
+
+Nur zum Mitentwickeln an der Vorlage selbst wird dieses Repository direkt
+geklont:
+
 ```bash
-git clone <dieses-repo> meine-thesis && cd meine-thesis
-typst watch thesis.typ          # Live-Vorschau, erzeugt thesis.pdf
+git clone https://github.com/SPI-Matse/inoffizielle-hfu-typst-vorlage.git
 ```
 
-Danach:
-
-1. In `thesis.typ` die Angaben zur Arbeit eintragen — Titel, Studiengang,
-   Referent:in, eigene Daten.
-2. `inhalt/abstract-de.typ` und `inhalt/abstract-en.typ` schreiben.
-3. Die Beispielkapitel in `inhalt/` durch eigene ersetzen und in `thesis.typ`
-   einbinden.
-4. Quellen in `literatur.bib` pflegen.
+Versionierte Stände werden unter
+[Releases](https://github.com/SPI-Matse/inoffizielle-hfu-typst-vorlage/releases)
+bereitgestellt.
 
 ## Projektstruktur
 
+```text
+thesis.typ        Angaben, Wahlmöglichkeiten und Kapitel
+inhalt/           Text der Arbeit
+anhang/           Anhangsteile und Monatsberichte
+bilder/           Abbildungen und Logo
+code/             eingebundene Quelldateien
+literatur.bib     Literaturdaten
+hfu/              Layout der Vorlage
+tests/pruefen.py  formale PDF-Prüfungen
 ```
-thesis.typ           Angaben zur Arbeit + Einbinden der Kapitel  ← hier startest du
-literatur.bib        Quellen im BibTeX-Format
-inhalt/              Der Text der Arbeit, eine Datei je Kapitel
-anhang/              Anhangsteile;  anhang/berichte/ für Monatsberichts-PDFs
-bilder/              Abbildungen (SVG, PNG, JPG, PDF) und das HFU-Logo
-code/                Quelldateien, die als Listing eingebunden werden
-tests/pruefen.py     Misst das erzeugte PDF gegen die Richtlinie
-hfu/                 Die Vorlage — im Normalfall unangetastet
-```
 
-Der Aufbau von `hfu/`:
+Im Normalfall werden nur `thesis.typ`, `literatur.bib`, `inhalt/`, `bilder/`,
+`code/` und `anhang/` bearbeitet.
 
-| Datei | Aufgabe |
-|---|---|
-| `config.typ` | **Alle** Vorgaben der Richtlinie als Werte, mit Fundstelle. Nur hier wird etwas verstellt. |
-| `layout.typ` | Dokumentgerüst: Seite, Schrift, Überschriften, Reihenfolge der Bestandteile |
-| `kapitel.typ` | Kopfzeile, Trennblätter, Kapitelgerüst |
-| `titelblatt.typ` | Titelblatt nach Tabelle 5 und Abbildung 4 |
-| `verzeichnisse.typ` | Inhalts-, Abbildungs-, Tabellen-, Quellcode-, Abkürzungsverzeichnis |
-| `versicherung.typ` | Versicherung über redliches wissenschaftliches Arbeiten (DE + EN) |
-| `elemente.typ` | Bausteine für die Kapitel: `abbildung`, `tabelle`, `quellcode`, … |
-| `lib.typ` | Öffentliche Schnittstelle — nur diese Datei wird importiert |
+## Wählbare Einstellungen
 
-## Die Reihenfolge macht die Vorlage
+### Zitierstil
 
-Tabelle 3 der Richtlinie gibt die Bestandteile einer Arbeit und ihre Reihenfolge
-fest vor. Statt sie selbst zusammenzustecken, übergibst du sie als benannte
-Argumente; den Rest — Trennblätter, Wechsel der Seitennummerierung,
-Kapitelbeginn auf der rechten Seite — erledigt die Vorlage:
+Am Anfang von `thesis.typ` wird zwischen IEEE und APA gewählt:
 
 ```typst
-#show: hfu-thesis.with(
-  art: "Bachelorthesis",
-  studiengang: "Allgemeine Informatik",
-  titel: "Titel der Arbeit",
-  untertitel: "Untertitel der Arbeit",     // none, wenn es keinen gibt
-  referent: "Prof. Dr. Vorname Nachname",
-  korreferent: "Prof. Dr. Vorname Nachname",
-  ersetztes-modul: none,                   // nur bei Projekt- und Studienarbeiten
-  vorgelegt-am: datetime(year: 2026, month: 8, day: 15),
-  autor: (
-    name: "Vorname Nachname",
-    matrikelnummer: "123456",
-    strasse: "Musterstraße 1",
-    ort: "78120 Furtwangen",
-    email: "vorname.nachname@hs-furtwangen.de",
-  ),
-
-  vorwort: none,                           // optional (§2.3)
-  abstract-en: include "inhalt/abstract-en.typ",
-  abstract-de: include "inhalt/abstract-de.typ",
-  abkuerzungen: (
-    ("HFU", "Hochschule Furtwangen University"),
-  ),
-  quellen: bibliography("literatur.bib", style: "ieee", title: none),
-  anhang: (
-    ("Monatsberichte", include "anhang/a-monatsberichte.typ"),
-  ),
-)
-
-#include "inhalt/01-einleitung.typ"        // ab hier nur noch der Inhalt
+#let zitierstil = "ieee" // alternativ: "apa"
 ```
 
-Fehlt eine Pflichtangabe, bricht die Vorlage mit einer Meldung ab, die die
-Fundstelle in der Richtlinie nennt.
+Die Fakultät empfiehlt beide Stile, verlangt aber die Abstimmung mit den
+Betreuer:innen (§2.9.4). Typst `0.15.1` verwendet:
+
+| Wert | Umsetzung |
+|---|---|
+| `"ieee"` | IEEE Reference Guide, Stand 29.11.2023; nummerische Verweise |
+| `"apa"` | APA Style, 7. Auflage; Autor-Jahr-Verweise |
+
+Weiterführend:
+
+- [Typst: Bibliography Styles](https://typst.app/docs/reference/model/bibliography/#parameters-style)
+- [APA Style: References](https://apastyle.apa.org/style-grammar-guidelines/references)
+- [IEEE Reference Guide](https://ieeeauthorcenter.ieee.org/wp-content/uploads/IEEE-Reference-Guide.pdf)
+
+Nur im Text zitierte Quellen erscheinen im Literaturverzeichnis. Bei
+veränderlichen Onlinequellen ist ein Abrufdatum anzugeben; eine reine URL-Liste
+genügt nicht.
+
+### Schrift
+
+Die Richtlinie schreibt **keine konkrete Schriftfamilie** vor. Gefordert sind
+eine einheitliche Schrift und der Verzicht auf Zier- oder Schmuckschriften. Nur
+Quellcode darf eine zweite Monospace-Schrift verwenden (§1.3).
+
+Die Voreinstellung in `thesis.typ` lautet:
+
+```typst
+#let schrift = ("Arial", "Liberation Sans", "Nimbus Sans", "Helvetica")
+#let schrift-mono = ("Liberation Mono", "DejaVu Sans Mono", "Consolas", "Menlo")
+```
+
+Typst probiert die Schriften in dieser Reihenfolge. Warnungen zu fehlenden
+Fallback-Schriften sind unproblematisch, solange mindestens eine Schrift der
+jeweiligen Kette installiert ist. Schriftdateien selbst werden nicht
+mitgeliefert.
+
+### Weitere Wahlmöglichkeiten
+
+| Einstellung | Vorgabe beziehungsweise Spielraum |
+|---|---|
+| `blocksatz` | Blocksatz oder linksbündiger Flattersatz; Blocksatz empfohlen |
+| `vorwort` | optional |
+| `sperrvermerk` | optional und mit allen Betreuer:innen abzustimmen |
+| `anhang` | optional; Monatsberichte der Thesis gehören hinein |
+| `querformat` | nur für große Abbildungen oder Tabellen |
+| `quellcodeverzeichnis` | nicht in der Richtlinie vorgesehen; standardmäßig aus |
+
+Nicht frei wählbar sind unter anderem Seitenformat, Ränder, Bundsteg,
+Schriftgrade, Kopfzeilenaufbau, Pflichtbestandteile, Rechtsbeginn der
+Hauptkapitel und die vorgeschriebenen Trennblätter.
+
+## Sperrvermerk
+
+Der optionale Sperrvermerk steht unmittelbar nach dem Titelblatt und vor allen
+weiteren Bestandteilen. Seine Seite besitzt weder Kopfzeile noch Seitenzahl und
+erscheint nicht im Inhaltsverzeichnis. Anschließend folgt weiterhin das
+vorgeschriebene leere Trennblatt.
+
+Praxissemesterbericht beziehungsweise Bericht:
+
+```typst
+sperrvermerk: (
+  firma: "Musterunternehmen GmbH",
+  variante: "bericht",
+),
+```
+
+Bachelorarbeit:
+
+```typst
+sperrvermerk: (
+  firma: "Musterunternehmen GmbH",
+  variante: "bachelorarbeit",
+),
+```
+
+Ohne Sperrvermerk:
+
+```typst
+sperrvermerk: none,
+```
+
+Die Richtlinie erlaubt Sperrvermerke und Anonymisierung, gibt aber keinen
+Wortlaut vor. Der verwendete Text muss daher vor der Abgabe bestätigt werden.
 
 ## Schreiben
 
-Jede Kapiteldatei beginnt mit dem Import der Bausteine:
+Kapiteldateien importieren die öffentlichen Bausteine:
 
 ```typst
 #import "../hfu/lib.typ": *
+
+= Hauptkapitel
+== Unterkapitel
+=== Dritte Ebene
 ```
 
-### Überschriften und Text
+Das Inhaltsverzeichnis führt höchstens drei Ebenen. Hauptkapitel beginnen
+automatisch auf einer rechten Seite.
 
-```typst
-= Hauptkapitel        // Ebene 1, beginnt automatisch auf der rechten Seite
-== Unterkapitel       // Ebene 2
-=== Unterkapitel      // Ebene 3, tiefer geht das Inhaltsverzeichnis nicht (Tabelle 6)
-```
-
-Absätze werden durch eine Leerzeile getrennt und bekommen automatisch den
-Absatzabstand nach §1.2.6.
-
-### Abbildungen
+### Abbildungen und Tabellen
 
 ```typst
 #abbildung(
   image("/bilder/architektur.svg", width: 80%),
-  caption: [Aufbau des Systems],       // steht im Abbildungsverzeichnis
-  quelle: [@mueller2021, S. 42],       // steht darunter, aber NICHT im Verzeichnis
+  caption: [Aufbau des Systems],
+  quelle: [@mueller2021, S. 42],
 ) <abb-architektur>
-```
 
-Die Trennung ist Absicht: §2.6 verlangt die Quellenangabe unter der Beschriftung,
-§3.7 stellt klar, dass sie nicht zum Abbildungstitel gehört. Verweise im Text
-über `@abb-architektur`.
-
-### Tabellen
-
-```typst
 #tabelle(
   columns: (auto, 1fr),
   [Kriterium], [Wert],
   [Durchsatz], [1,2 GB/s],
   caption: [Messergebnisse],
-  quelle: none,
 )
 ```
 
-Der Tabelleninhalt wird automatisch auf 10 pt gesetzt (Tabelle 2).
+Beschriftungen sind verpflichtend und stehen unter dem Element. Quellen stehen
+darunter, gehören aber nicht zum Verzeichniseintrag.
 
-### Quellcode
+Abbildungs- und Tabellenverzeichnis werden nur erzeugt, wenn im Dokument
+entsprechende Elemente vorkommen. Eine zusätzliche Referenz über `@label` ist
+nicht erforderlich. Das optionale Quellcodeverzeichnis arbeitet nach
+Aktivierung genauso.
 
-Kurze Listings direkt im Text:
+### Quellcode und weitere Bausteine
 
 ```typst
-#quellcode(
-  ```python
-  def hallo():
-      print("Hallo")
-  ```,
-  caption: [Minimalbeispiel],
+#quellcode-datei(
+  path("/code/beispiel.py"),
+  lang: "python",
+  caption: [Beispielprogramm],
 )
+
+#zitat(quelle: [@autor2021, S. 12])[Längeres direktes Zitat.]
+#querformat[ ... breite Tabelle ... ]
+#monatsbericht(path("/anhang/berichte/2026-01.pdf"), titel: "Januar")
 ```
 
-Längerer Code gehört nach `code/` und wird von dort eingebunden — so bleibt er
-ausführbar und lintbar:
+`path(…)` löst Dateien im aufrufenden Projekt auf und ist damit auch für einen
+späteren Paketimport geeignet.
 
-```typst
-#quellcode-datei("/code/beispiel.py", lang: "python", caption: [Beispielprogramm])
-```
+## Automatisch umgesetzte Kernvorgaben
 
-Pfade beginnen mit `/` und beziehen sich damit auf die Projektwurzel. Sie
-funktionieren dadurch aus jedem Unterordner gleich.
+- DIN A4, beidseitiges Buchformat und Innen-/Außenränder einschließlich
+  Bundsteg
+- 12-pt-Fließtext, 1,5-zeiliger Abstand und definierte Überschriftengrößen
+- Kapitelüberschrift innen und Seitenzahl außen in der Kopfzeile
+- Titelblatt und leeres Trennblatt
+- römische Nummerierung des Vorspanns, arabische Nummerierung des Inhalts
+- Abstract auf Englisch und Deutsch
+- dynamische Verzeichnisse und Abkürzungsverzeichnis
+- Literaturverzeichnis mit eigenem Zeilenabstand
+- deutsche und englische Versicherung
+- eigener Nummerierungsbereich für jeden Anhangsteil
 
-### Weitere Bausteine
+Nicht enthalten sind das optionale Stichwortverzeichnis und das separate
+IEEE-Conference-Layout für Master-Seminararbeiten und -Berichte.
 
-```typst
-#zitat(quelle: [@autor2021, S. 12])[Wörtliches Zitat über mehrere Zeilen (§3.6).]
-#querformat[ ... sehr breite Tabelle ... ]
-#monatsbericht("/anhang/berichte/2026-01.pdf", titel: "Monatsbericht Januar")
-```
+## Auslegungsentscheidungen
 
-### Zitieren
+Die Richtlinie ist an einzelnen Stellen widersprüchlich oder nicht vollständig:
 
-```typst
-Wie @knuth1984 zeigt, ...        // Verweis im Text
-... mehrere Quellen @a2020 @b2021.
-```
+- **Verzeichnisse:** §1.3.2 verlangt 1,5-zeilig, die Tabellen 6–8 nennen
+  1-zeilig. Standard ist 1,5-zeilig.
+- **Inhaltsverzeichnis:** §2.5 fordert alle Überschriften außer dem Titelblatt.
+  Daher listet sich das Inhaltsverzeichnis standardmäßig selbst.
+- **Quellcodeverzeichnis:** nicht Bestandteil der festgelegten Struktur und
+  deshalb standardmäßig deaktiviert.
 
-Zitierstil in `thesis.typ` umstellen: `style: "ieee"` oder `style: "apa"` — beide
-werden von der Fakultät empfohlen (§2.9.4) und sind in Typst eingebaut. Der Stil
-ist mit den Betreuer:innen abzusprechen.
-
-## Konfiguration
-
-Alles Einstellbare steht in **`hfu/config.typ`**, jeder Wert mit Verweis auf die
-Fundstelle in der Richtlinie. Die üblichen Verdächtigen:
-
-| Wert | Standard | Wirkung |
-|---|---|---|
-| `bundsteg` | `1.5cm` | Zusatzrand für die Klebebindung. Auf `0cm` setzen, wenn nicht gebunden abgegeben wird. |
-| `blocksatz` | `true` | `false` ergibt linksbündigen Flattersatz — beides ist nach §1.3.2 zulässig. |
-| `figur-ausrichtung` | `left` | Ausrichtung von Abbildungen, Tabellen und Beschriftungen. `center` für zentriert. |
-| `verzeichnis-zeile` | `zeile` | Zeilenabstand der Verzeichnisse, siehe unten. |
-| `quellcodeverzeichnis` | `true` | Quellcodeverzeichnis erzeugen, sofern Listings vorhanden sind. |
-| `inhaltsverzeichnis-listet-sich-selbst` | `true` | Ob „Inhaltsverzeichnis“ als eigener Eintrag erscheint. |
-| `logo` | `"/bilder/hfu-logo.svg"` | `none` lässt das Logo auf dem Titelblatt weg. |
+Änderungen an diesen Punkten sollten mit den Betreuer:innen abgestimmt werden.
 
 ## Prüfen
-
-Die Richtlinie stellt in §1 fest, dass Abweichungen im Bachelorstudium unzulässig
-sind. Damit „richtlinienkonform“ nicht nur eine Behauptung ist, misst
-`tests/pruefen.py` das **fertige PDF** nach:
 
 ```bash
 python3 tests/pruefen.py
 ```
 
-Geprüft werden unter anderem Seitenränder und ihre Spiegelung, der
-Grundlinienabstand, die Schriftgrade, der Wechsel von römischer auf arabische
-Nummerierung, Position von Seitenzahl und Kapitelüberschrift in der Kopfzeile,
-der Kapitelbeginn auf rechten Seiten, die Trennblätter und das Muster der
-Beschriftungen.
-
-Wer `config.typ` ändert, sollte das Skript danach laufen lassen — es liest die
-Randmaße von dort und prüft gegen die eigene Konfiguration.
-
-## Auslegungsentscheidungen
-
-An drei Stellen ist die Richtlinie nicht eindeutig. Die Vorlage entscheidet so:
-
-**Zeilenabstand der Verzeichnisse.** §1.3.2 schreibt 1,5-zeilig vor, die Tabellen
-6, 7 und 8 schreiben 1-zeilig vor. Nachgemessen im Referenz-PDF der Fakultät:
-dessen eigene Verzeichnisse laufen mit 20,7 pt, also 1,5-zeilig. Dieser Messung
-folgt die Vorlage. Umschaltbar über `verzeichnis-zeile`.
-
-**Bundsteg.** Tabelle 1 nennt 1,5 cm; das Referenz-PDF der Fakultät ist dagegen
-symmetrisch mit 2,5 cm gesetzt. Die Vorlage folgt der Tabelle und schlägt den
-Bundsteg auf den Innenrand auf (innen 4 cm, außen 2,5 cm). Über `bundsteg`
-abschaltbar.
-
-**Selbsteintrag des Inhaltsverzeichnisses.** §2.5 verlangt „alle Überschriften …
-jedoch nicht das Titelblatt“ — wörtlich gelesen also auch das Inhaltsverzeichnis
-selbst. Die Vorlage liest wörtlich; über
-`inhaltsverzeichnis-listet-sich-selbst` abschaltbar.
-
-Nicht enthalten sind das optionale Stichwortverzeichnis (Tabelle 3) und die
-IEEE-Conference-Vorlage für Seminararbeiten in Masterstudiengängen (§1) — die ist
-ein eigenes Layout.
+Benötigt werden `python3`, `typst` und `pdftotext` aus Poppler. Das Skript prüft
+unter anderem Ränder, Zeilenabstand, Schriftgrade, Seitennummerierung,
+Kopfzeilen, Rechtsbeginn der Hauptkapitel, Trennblätter und Beschriftungen.
 
 ## Hinweise
 
-**Leere Füllseiten tragen Kopfzeile und Seitenzahl.** Hauptkapitel beginnen laut
-§1.2.3 immer rechts; die dabei entstehende Füllseite bleibt inhaltlich leer, führt
-aber Kopfzeile und Seitenzahl weiter — genauso wie ein Abschnittswechsel
-„Ungerade Seite“ in Word. Die nach §2.2, §2.11 und §2.13 vorgeschriebenen
-Trennblätter sind davon unberührt und vollständig leer.
+- Die vollständige HFU-Richtlinie wird nicht im Repository mitgeliefert. Die
+  jeweils aktuelle Fassung ist direkt über die HFU zu beziehen.
+- Das enthaltene HFU-Logo ist eine Marke der Hochschule. Vor einer
+  Veröffentlichung als allgemeines Vorlagenpaket sind Nutzungs- und
+  Weiterverteilungsrechte zu klären.
+- Vorbild für Teile der Struktur ist die
+  [SPI-Matse/HFU-LaTeX-Vorlage](https://github.com/SPI-Matse/HFU-LaTeX-Vorlage).
 
-**Das HFU-Logo** liegt als Vektorgrafik unter `bilder/hfu-logo.svg` bei. Es ist
-eine Marke der Hochschule Furtwangen und darf nur im Rahmen von HFU-Arbeiten
-verwendet werden.
+## Lizenz
 
-## Quellen
-
-- *Richtlinie für die Erstellung wissenschaftlicher Arbeiten*, Fakultät
-  Informatik der Hochschule Furtwangen, Januar 2024 — im Repo unter
-  `Richtlinie_fur_die_Erstellung_wissenschaftlicher_Arbeiten_01.2024-2-1.pdf`
-- [SPI-Matse/HFU-LaTeX-Vorlage](https://github.com/SPI-Matse/HFU-LaTeX-Vorlage) —
-  Vorbild für Ordnerstruktur, Quellcodeverzeichnis und die Zusatzfelder des
-  Titelblatts; von dort stammt auch die Vektorfassung des Logos.
+Der selbst erstellte Quellcode steht unter der [MIT-Lizenz](LICENSE), Copyright
+© 2026 Tom Seelig. Rechte an Namen, Marken, Logos und sonstigem Material Dritter
+werden dadurch nicht übertragen.

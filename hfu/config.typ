@@ -6,18 +6,20 @@
 // nennen jeweils die Fundstelle in der Richtlinie.
 
 // ── Schriftarten ────────────────────────────────────────────────────────────
-// §1.3: eine einheitliche Schriftart, keine Zier- oder Schmuckschrift.
-// Die Richtlinie selbst ist in Arial gesetzt. Liberation Sans ist metrik-
-// kompatibel zu Arial, deshalb bricht der Text auf jeder Plattform gleich um.
+// §1.3 schreibt keine konkrete Schriftfamilie vor. Gefordert sind lediglich
+// eine einheitliche Schriftart sowie der Verzicht auf Zier- und Schmuckschrift.
+// Arial ist daher eine Vorlagenentscheidung, keine Vorgabe der Richtlinie.
+// Liberation Sans ist metrikkompatibel zu Arial und dient als freier Fallback.
 #let schrift = ("Arial", "Liberation Sans", "Nimbus Sans", "Helvetica")
 
-// §1.3: für Quellcode ist eine zweite, nicht-proportionale Schrift zulässig.
+// §1.3: Ausschließlich für Quellcode ist eine zweite, nicht-proportionale
+// Schrift zulässig.
 #let schrift-mono = ("Liberation Mono", "DejaVu Sans Mono", "Consolas", "Menlo")
 
 // ── Seitenränder ────────────────────────────────────────────────────────────
-// Tabelle 1. Der Bundsteg wird auf den inneren Rand aufgeschlagen.
-// Auf 0cm setzen, wenn die Arbeit nicht klebegebunden abgegeben wird — dann
-// entspricht der Textspiegel dem Referenz-PDF der Fakultät (2,5 cm symmetrisch).
+// Tabelle 1. Der Bundsteg wird auf den inneren Rand aufgeschlagen. Die
+// Richtlinie verlangt Klebebindung und 1,5 cm Bundsteg; Abweichungen deshalb
+// nur nach ausdrücklicher Rücksprache mit den Betreuer:innen.
 #let rand-oben = 3cm
 #let rand-unten = 2cm
 #let rand-innen = 2.5cm
@@ -59,9 +61,8 @@
 
 // §1.3.2 vs. Tabellen 6/7/8: Die Richtlinie widerspricht sich beim
 // Zeilenabstand der Verzeichnisse — §1.3.2 sagt 1,5-zeilig, die Tabellen sagen
-// 1-zeilig. Das Referenz-PDF der Fakultät setzt seine Verzeichnisse mit
-// 20,7 pt, also 1,5-zeilig. Dieser Messung folgt die Vorlage.
-// Auf `zeile-einfach` setzen, wenn die Tabellen 6/7/8 gelten sollen.
+// 1-zeilig. Die Vorlage priorisiert die allgemeine Vorgabe aus §1.3.2.
+// Abweichungen nur nach Rücksprache; technisch wäre `zeile-einfach` möglich.
 #let verzeichnis-zeile = zeile
 
 // ── Satz ────────────────────────────────────────────────────────────────────
@@ -69,8 +70,9 @@
 // empfohlen. Auf false setzen für Flattersatz.
 #let blocksatz = true
 
-// Ausrichtung von Abbildungen, Tabellen und ihren Beschriftungen.
-// Das Referenz-PDF der Fakultät setzt beides linksbündig.
+// Ausrichtung von Abbildungen, Tabellen und ihren Beschriftungen. Die
+// Richtlinie legt hierfür keine allgemeine horizontale Ausrichtung fest; ihre
+// Darstellungsbeispiele sind linksbündig.
 #let figur-ausrichtung = left
 
 // ── Verzeichnisse ───────────────────────────────────────────────────────────
@@ -81,10 +83,10 @@
 // listet das Inhaltsverzeichnis also auch sich selbst auf.
 #let inhaltsverzeichnis-listet-sich-selbst = true
 
-// Ein Quellcodeverzeichnis steht nicht in Tabelle 3 der Richtlinie. Es folgt
-// der Logik von Abbildungs- und Tabellenverzeichnis ("verpflichtend, sofern
-// vorhanden") und erscheint nur, wenn Listings existieren.
-#let quellcodeverzeichnis = true
+// Ein Quellcodeverzeichnis steht nicht in der festgelegten Dokumentstruktur
+// aus Tabelle 3. Es ist deshalb standardmäßig deaktiviert und sollte nur nach
+// Rücksprache mit den Betreuer:innen ergänzt werden.
+#let quellcodeverzeichnis = false
 
 // ── Titelblatt ──────────────────────────────────────────────────────────────
 // Abbildung 4 zeigt das HFU-Logo oben rechts. Auf `none` setzen, um es
