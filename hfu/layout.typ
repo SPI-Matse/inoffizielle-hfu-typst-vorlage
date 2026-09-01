@@ -225,6 +225,10 @@
   vorspann-kapitel("Abkürzungsverzeichnis", abkuerzungsverzeichnis(abkuerzungen))
 
   // ── 10. Inhaltlicher Teil: arabische Ziffern ab 1 (Tabelle 4) ─────────────
+  // Zuerst auf eine rechte Seite wechseln und erst dort die Nummerierung
+  // zurücksetzen. Andernfalls könnte eine notwendige Füllseite bereits die
+  // arabische Seitenzahl 1 tragen.
+  auf-rechte-seite()
   set page(numbering: "1")
   counter(page).update(1)
   seitenzahl-neustart()

@@ -1,5 +1,7 @@
 # Inoffizielle HFU-Typst-Vorlage für wissenschaftliche Arbeiten
 
+[![Build and release](https://github.com/SPI-Matse/inoffizielle-hfu-typst-vorlage/actions/workflows/build-release.yml/badge.svg)](https://github.com/SPI-Matse/inoffizielle-hfu-typst-vorlage/actions/workflows/build-release.yml)
+
 Inoffizielle Typst-Vorlage für wissenschaftliche Arbeiten an der **Fakultät I
 (Informatik) der Hochschule Furtwangen**. Sie basiert auf der *Richtlinie für
 die Erstellung wissenschaftlicher Arbeiten*, Stand **Januar 2024**.
@@ -252,6 +254,9 @@ python3 tests/pruefen.py
 Benötigt werden `python3`, `typst` und `pdftotext` aus Poppler. Das Skript prüft
 unter anderem Ränder, Zeilenabstand, Schriftgrade, Seitennummerierung,
 Kopfzeilen, Rechtsbeginn der Hauptkapitel, Trennblätter und Beschriftungen.
+GitHub Actions führt diese Prüfung bei Pushes und Pull Requests aus. Tags nach
+dem Muster `v1.0.0` erzeugen zusätzlich ein GitHub Release mit der geprüften
+Beispiel-PDF.
 
 ## Hinweise
 
