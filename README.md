@@ -2,6 +2,8 @@
 
 [![Build and release](https://github.com/SPI-Matse/inoffizielle-hfu-typst-vorlage/actions/workflows/build-release.yml/badge.svg)](https://github.com/SPI-Matse/inoffizielle-hfu-typst-vorlage/actions/workflows/build-release.yml)
 
+Aktuelle Version: **v1.0.1**
+
 Inoffizielle Typst-Vorlage für wissenschaftliche Arbeiten an der **Fakultät I
 (Informatik) der Hochschule Furtwangen**. Sie basiert auf der *Richtlinie für
 die Erstellung wissenschaftlicher Arbeiten*, Stand **Januar 2024**.
@@ -33,7 +35,8 @@ oder neuer. Alternativ kann das Projekt vollständig in die
    ```
 
 3. Angaben und Wahlmöglichkeiten in `thesis.typ` anpassen.
-4. Deutsche und englische Abstract-Datei ausfüllen.
+4. Deutsche und englische Abstract-Datei sowie `inhalt/abkuerzungen.typ`
+   ausfüllen.
 5. Beispielkapitel ersetzen und Quellen in `literatur.bib` pflegen.
 
 Nur zum Mitentwickeln an der Vorlage selbst wird dieses Repository direkt
@@ -50,20 +53,36 @@ bereitgestellt.
 ## Projektstruktur
 
 ```text
-thesis.typ        Angaben, Wahlmöglichkeiten und Kapitel
-inhalt/           Text der Arbeit
-anhang/           Anhangsteile und Monatsberichte
-bilder/           Abbildungen und Logo
-code/             eingebundene Quelldateien
-literatur.bib     Literaturdaten
-hfu/              Layout der Vorlage
-tests/pruefen.py  formale PDF-Prüfungen
+thesis.typ                    Angaben, Wahlmöglichkeiten und Kapitel
+inhalt/                       Text der Arbeit und Vorspann
+inhalt/abkuerzungen.typ       Abkürzungen mit Erklärungen
+anhang/                       Anhangsteile und Monatsberichte
+bilder/                       Abbildungen und Logo
+code/                         eingebundene Quelldateien
+literatur.bib                 Literaturdaten
+hfu/                          Layout der Vorlage
+tests/pruefen.py              formale PDF-Prüfungen
 ```
 
 Im Normalfall werden nur `thesis.typ`, `literatur.bib`, `inhalt/`, `bilder/`,
 `code/` und `anhang/` bearbeitet.
 
 ## Wählbare Einstellungen
+
+### Abkürzungen
+
+Abkürzungen werden zentral in `inhalt/abkuerzungen.typ` als Paare aus
+Abkürzung und Erklärung gepflegt:
+
+```typst
+#let abkuerzungen = (
+  ("HFU", "Hochschule Furtwangen University"),
+  ("SPO", "Studien- und Prüfungsordnung"),
+)
+```
+
+`thesis.typ` importiert diese Liste; die Vorlage sortiert die Einträge für das
+Abkürzungsverzeichnis automatisch alphabetisch.
 
 ### Zitierstil
 
@@ -255,7 +274,7 @@ Benötigt werden `python3`, `typst` und `pdftotext` aus Poppler. Das Skript prü
 unter anderem Ränder, Zeilenabstand, Schriftgrade, Seitennummerierung,
 Kopfzeilen, Rechtsbeginn der Hauptkapitel, Trennblätter und Beschriftungen.
 GitHub Actions führt diese Prüfung bei Pushes und Pull Requests aus. Tags nach
-dem Muster `v1.0.0` erzeugen zusätzlich ein GitHub Release mit der geprüften
+dem Muster `v1.0.1` erzeugen zusätzlich ein GitHub Release mit der geprüften
 Beispiel-PDF.
 
 ## Hinweise

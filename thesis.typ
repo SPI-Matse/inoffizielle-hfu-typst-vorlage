@@ -9,6 +9,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 #import "hfu/lib.typ": *
+#import "inhalt/abkuerzungen.typ": abkuerzungen
 
 // ── Bewusste Wahlmöglichkeiten ─────────────────────────────────────────────
 // Die Fakultät empfiehlt IEEE oder APA; die Wahl ist mit den Betreuer:innen
@@ -62,13 +63,8 @@
   abstract-en: include "inhalt/abstract-en.typ",
   abstract-de: include "inhalt/abstract-de.typ",
 
-  // §2.8: Abkürzung und Erklärung. Die Sortierung übernimmt die Vorlage.
-  abkuerzungen: (
-    ("APA", "American Psychological Association"),
-    ("HFU", "Hochschule Furtwangen University"),
-    ("IEEE", "Institute of Electrical and Electronics Engineers"),
-    ("SPO", "Studien- und Prüfungsordnung"),
-  ),
+  // §2.8: Abkürzung und Erklärung stehen in inhalt/abkuerzungen.typ.
+  abkuerzungen: abkuerzungen,
 
   // ── Literaturverzeichnis ──────────────────────────────────────────────────
   // Nur zitierte Einträge werden ausgegeben (§2.9.5). `zitierstil` wird oben
