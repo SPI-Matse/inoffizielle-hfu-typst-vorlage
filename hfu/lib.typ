@@ -13,5 +13,5 @@
 #import "layout.typ": hfu-thesis
 
 // Bausteine für die Kapiteldateien.
-#import "elemente.typ": abbildung, monatsbericht, quellcode, quellcode-datei
-#import "elemente.typ": querformat, tabelle, zitat
+#import "elemente.typ": abbildung, abk, abkuerzung, monatsbericht, quellcode
+#import "elemente.typ": quellcode-datei, querformat, tabelle, zitat

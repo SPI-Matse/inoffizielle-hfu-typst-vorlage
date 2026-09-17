@@ -57,16 +57,23 @@
 
 // §2.8: "Das Abkürzungsverzeichnis besteht aus zwei Spalten. Die erste Spalte
 // beinhaltet die Abkürzung, die zweite Spalte die zugehörige Erklärung."
-#let abkuerzungsverzeichnis(liste) = {
+#let abkuerzungsverzeichnis(liste) = context {
   if liste == none or liste.len() == 0 { return }
 
-  let sortiert = liste.sorted(key: eintrag => upper(eintrag.at(0)))
+  // Nur mit `abk(…)` markierte und damit tatsächlich gesetzte Einträge
+  // aufnehmen. Mehrfachverwendungen ändern das Verzeichnis nicht.
+  let verwendet = query(<hfu-abkuerzung>).map(element => element.value)
+  let sortiert = liste
+    .filter(eintrag => eintrag.at(0) in verwendet)
+    .sorted(key: eintrag => upper(eintrag.at(0)))
 
-  verzeichnis-satz(grid(
-    columns: (auto, 1fr),
-    column-gutter: 1.5em,
-    row-gutter: cfg.verzeichnis-zeile - 1em,
-    align: (left, left),
-    ..sortiert.map(eintrag => (eintrag.at(0), eintrag.at(1))).flatten(),
-  ))
+  if sortiert.len() > 0 {
+    verzeichnis-satz(grid(
+      columns: (auto, 1fr),
+      column-gutter: 1.5em,
+      row-gutter: cfg.verzeichnis-zeile - 1em,
+      align: (left, left),
+      ..sortiert.map(eintrag => (eintrag.at(0), eintrag.at(1))).flatten(),
+    ))
+  }
 }

@@ -2,9 +2,10 @@
 
 = Einleitung
 
-Dieses Kapitel zeigt, wie mit der Vorlage gearbeitet wird. Der eigene Text
-ersetzt den Beispieltext; die Formatierung ist bereits eingestellt und muss
-nicht angefasst werden.
+Dieses Kapitel zeigt, wie mit der Vorlage gearbeitet wird. Sie eignet sich für
+Arbeiten an der #abk("HFU") und unterstützt unter anderem den Zitierstil des
+#abk("IEEE"). Der eigene Text ersetzt den Beispieltext;
+die Formatierung ist bereits eingestellt und muss nicht angefasst werden.
 
 Absätze werden durch eine Leerzeile getrennt und erhalten automatisch den
 Absatzabstand, den die Richtlinie in §1.2.6 verlangt. Der Zeilenabstand ist

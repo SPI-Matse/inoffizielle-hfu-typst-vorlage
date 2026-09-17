@@ -321,6 +321,30 @@ def main() -> int:
     ]:
         p.pruefe(ueberschrift in volltext, f"Bestandteil „{ueberschrift}“ ({fundstelle})")
 
+    # Auf der eigentlichen Verzeichnisseite kommt der Titel in Kopfzeile und
+    # Überschrift vor. Im Inhaltsverzeichnis und auf Füllseiten steht er nur
+    # einmal.
+    abk_text = next(
+        (
+            seite
+            for seite in volltext.split("\f")
+            if seite.count("Abkürzungsverzeichnis") >= 2
+        ),
+        "",
+    )
+    p.pruefe(
+        "HFU" in abk_text and "IEEE" in abk_text,
+        "verwendete Abkürzungen erscheinen im Abkürzungsverzeichnis",
+    )
+    p.pruefe(
+        "APA" not in abk_text and "SPO" not in abk_text,
+        "nicht verwendete Abkürzungen werden ausgelassen",
+    )
+    p.pruefe(
+        abk_text.find("HFU") < abk_text.find("IEEE"),
+        "Abkürzungsverzeichnis ist alphabetisch sortiert",
+    )
+
     trennblaetter = [nr for nr, s in enumerate(seiten, start=1) if not s]
     p.pruefe(
         len(trennblaetter) >= 3,

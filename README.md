@@ -81,8 +81,20 @@ Abkürzung und Erklärung gepflegt:
 )
 ```
 
-`thesis.typ` importiert diese Liste; die Vorlage sortiert die Einträge für das
-Abkürzungsverzeichnis automatisch alphabetisch.
+`thesis.typ` importiert diese Liste. Im Text werden Abkürzungen mit dem über
+`hfu/lib.typ` verfügbaren Baustein markiert:
+
+```typst
+Die #abk("HFU") empfiehlt unter anderem den Stil des #abk("IEEE").
+```
+
+Der kurze Name `abk` ist für den häufigen Einsatz im Fließtext vorgesehen;
+`abkuerzung` steht als gleichwertige, ausgeschriebene Variante zur Verfügung.
+Die Vorlage nimmt nur so markierte, tatsächlich gesetzte Abkürzungen in das
+Verzeichnis auf, entfernt Mehrfachnennungen und sortiert die Einträge
+automatisch alphabetisch. Ein normal geschriebener Text wie `HFU` kann von
+Typst nicht zuverlässig als Abkürzungsverwendung erkannt werden und zählt
+deshalb nicht.
 
 ### Zitierstil
 

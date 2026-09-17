@@ -7,6 +7,19 @@
 
 #import "config.typ" as cfg
 
+// Markiert eine im Text verwendete Abkürzung. Das unsichtbare Metadatum
+// ermöglicht es dem Abkürzungsverzeichnis, unbenutzte Einträge auszulassen.
+#let abkuerzung(kurz) = {
+  if type(kurz) != str {
+    panic("hfu-vorlage: `abk` erwartet eine Abkürzung als String.")
+  }
+  [#metadata(kurz) <hfu-abkuerzung>#kurz]
+}
+
+// Kurzer Name für den häufigen Aufruf im Fließtext. Der ausgeschriebene Name
+// bleibt als selbsterklärende Alternative verfügbar.
+#let abk = abkuerzung
+
 // §2.6/§2.7: Der Quellenverweis steht direkt unterhalb der Beschriftung.
 // §3.7: Er gehört nicht zum Titel und damit nicht ins Verzeichnis. Deshalb ist
 // er kein Teil der `caption`, sondern eine eigene Zeile darunter.
