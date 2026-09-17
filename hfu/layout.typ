@@ -1,19 +1,18 @@
 // Seitenaufbau, Kopfzeile, Nummerierungsphasen und Überschriften.
 //
-// Der Kern ist `hfu-thesis`: eine Show-Rule-Funktion, die die von der
-// Richtlinie in Tabelle 3 fest vorgegebene Reihenfolge der Bestandteile
-// besitzt. Der Dokumentkörper enthält deshalb nur den inhaltlichen Teil der
-// Arbeit; alles andere wird als benanntes Argument übergeben.
+// Der Kern ist `hfu-thesis`, eine Show-Rule-Funktion mit der in Tabelle 3 festgelegten Reihenfolge der Bestandteile.
+// Der Dokumentkörper enthält deshalb nur den inhaltlichen Teil der Arbeit.
+// Alles andere wird als benanntes Argument übergeben.
 
 #import "config.typ" as cfg
+#import "abkuerzungen.typ": registriere-abkuerzungen
 #import "kapitel.typ": auf-rechte-seite, kopfzeile, kopfzeile-marke
 #import "kapitel.typ": seitenzahl-neustart, trennblatt
 #import "kapitel.typ": unnummeriertes-kapitel, vorspann-kapitel
 #import "sperrvermerk.typ" as sperr
 #import "titelblatt.typ": titelblatt
 #import "verzeichnisse.typ": abbildungsverzeichnis, abkuerzungsverzeichnis
-#import "verzeichnisse.typ": inhaltsverzeichnis, quellcodeverzeichnis
-#import "verzeichnisse.typ": tabellenverzeichnis
+#import "verzeichnisse.typ": inhaltsverzeichnis, tabellenverzeichnis
 #import "versicherung.typ": versicherung
 
 #let fehlt(feld, wert, fundstelle) = {
@@ -24,11 +23,10 @@
   }
 }
 
-// Erzeugt ein Verzeichnis nur, wenn im fertig gesetzten Dokument mindestens
-// ein passendes Element vorkommt. Entscheidend ist das Vorhandensein, nicht ob
-// das Element zusätzlich mit `@label` im Fließtext referenziert wird.
-#let verzeichnis-wenn-vorhanden(titel, ziel, erstellen, aktiv: true) = context {
-  if aktiv and query(ziel).len() > 0 {
+// Erzeugt ein Verzeichnis nur, wenn im fertig gesetzten Dokument mindestens ein passendes Element vorkommt.
+// Entscheidend ist das Vorhandensein und nicht eine zusätzliche Referenz mit `@label`.
+#let verzeichnis-wenn-vorhanden(titel, ziel, erstellen) = context {
+  if query(ziel).len() > 0 {
     vorspann-kapitel(titel, erstellen())
   }
 }
@@ -49,6 +47,7 @@
   // Typografie — §1.3 schreibt keine konkrete Schriftfamilie vor
   schrift: cfg.schrift,
   schrift-mono: cfg.schrift-mono,
+  blocksatz: cfg.blocksatz,
   // Bestandteile — Tabelle 3
   vorwort: none,
   sperrvermerk: none,
@@ -67,8 +66,27 @@
     fehlt("korreferent", korreferent, "Tabelle 5")
   }
   fehlt("autor.name", autor.at("name", default: none), "Tabelle 5")
-  if vorgelegt-am == none {
-    panic("hfu-vorlage: `vorgelegt-am` muss gesetzt sein (Richtlinie Tabelle 5).")
+  fehlt(
+    "autor.matrikelnummer",
+    autor.at("matrikelnummer", default: none),
+    "Tabelle 5",
+  )
+  fehlt("autor.strasse", autor.at("strasse", default: none), "Tabelle 5")
+  fehlt("autor.ort", autor.at("ort", default: none), "Tabelle 5")
+  fehlt("autor.email", autor.at("email", default: none), "Tabelle 5")
+  assert(
+    type(vorgelegt-am) == datetime,
+    message: "hfu-vorlage: `vorgelegt-am` muss als `datetime` gesetzt sein (Richtlinie Tabelle 5).",
+  )
+  if type(art) == str {
+    let art-klein = lower(art)
+    assert(
+      not (
+        art-klein.contains("master")
+          and (art-klein.contains("seminar") or art-klein.contains("bericht"))
+      ),
+      message: "hfu-vorlage: Master-Seminararbeiten und -Berichte müssen im IEEE-Conference-Layout erstellt werden.",
+    )
   }
   if abstract-de == none or abstract-en == none {
     panic("hfu-vorlage: Der Abstract ist in deutscher und englischer Sprache verpflichtend (Richtlinie §2.4).")
@@ -76,6 +94,8 @@
   if quellen == none {
     panic("hfu-vorlage: Das Literaturverzeichnis ist verpflichtend (Richtlinie Tabelle 3 und §2.9.5).")
   }
+  registriere-abkuerzungen(abkuerzungen)
+
   if sperrvermerk != none {
     if type(sperrvermerk) != dictionary {
       panic("hfu-vorlage: `sperrvermerk` muss ein Dictionary mit `firma` und `variante` sein.")
@@ -87,11 +107,12 @@
     }
   }
 
-  set document(title: titel, author: autor.at("name"))
+  set document(title: titel, author: autor.at("name"), date: vorgelegt-am)
 
   // ── Seite ─────────────────────────────────────────────────────────────────
-  // §1.1 DIN A4, §1.2.1 Hochformat, §1.2.2 beidseitiger Druck im Buchformat,
-  // Tabelle 1 Ränder und Bundsteg. Der Bundsteg liegt am inneren Rand.
+  // §1.1 legt DIN A4 fest und §1.2.1 grundsätzlich Hochformat.
+  // §1.2.2 verlangt beidseitigen Druck im Buchformat.
+  // Tabelle 1 definiert die Ränder; der Bundsteg liegt am inneren Rand.
   set page(
     paper: "a4",
     binding: left,
@@ -109,9 +130,8 @@
   )
 
   // ── Text ──────────────────────────────────────────────────────────────────
-  // top-edge/bottom-edge fixieren die Zeilenbox auf exakt 1 em. Erst dadurch
-  // ergibt `leading` schriftunabhängig den in config.typ geforderten
-  // Grundlinienabstand.
+  // `top-edge` und `bottom-edge` fixieren die Zeilenbox auf exakt 1 em.
+  // Erst dadurch ergibt `leading` schriftunabhängig den in `config.typ` geforderten Grundlinienabstand.
   set text(
     font: schrift,
     size: cfg.groesse.text,
@@ -120,14 +140,14 @@
     bottom-edge: -0.25em,
   )
   set par(
-    justify: cfg.blocksatz, // §1.3.2
+    justify: blocksatz, // §1.3.2
     leading: cfg.zeile - 1em, // §1.3.2
     spacing: cfg.absatzabstand, // §1.2.6
     first-line-indent: 0pt,
   )
   // ── Überschriften ─────────────────────────────────────────────────────────
-  // Ebene 1 mit Punkt ("1. Einleitung"), Ebene 2 und 3 ohne ("1.1", "1.2.3") —
-  // entsprechend den Darstellungsbeispielen der Richtlinie.
+  // Ebene 1 erhält einen Punkt wie in "1. Einleitung".
+  // Die Ebenen 2 und 3 folgen den Richtlinienbeispielen ohne abschließenden Punkt.
   set heading(numbering: (..n) => {
     let z = n.pos()
     if z.len() == 1 { numbering("1.", ..z) } else { numbering("1.1", ..z) }
@@ -148,6 +168,11 @@
   // Tabellen 7/8: fortlaufende Nummerierung, nicht kapitelweise (Typst-Standard)
 
   show footnote.entry: set text(size: cfg.groesse.fussnote) // Tabelle 2
+  show quote.where(block: true): set block(
+    inset: (left: 1cm, right: 0.5cm),
+    above: cfg.absatzabstand,
+    below: cfg.absatzabstand,
+  )
   // Nur Quellcode darf nach §1.3 eine zweite Monospace-Schrift verwenden.
   show raw: set text(font: schrift-mono, size: cfg.groesse.quellcode)
 
@@ -164,9 +189,9 @@
     autor: autor,
   )
 
-  // Optionaler Sperrvermerk: unmittelbar nach dem Titelblatt, ohne Kopfzeile,
-  // Seitenzahl oder Eintrag im Inhaltsverzeichnis. Das anschließende leere
-  // Trennblatt vor Vorwort bzw. Abstract bleibt gemäß §2.2 erhalten.
+  // Der optionale Sperrvermerk steht unmittelbar nach dem Titelblatt.
+  // Er besitzt keine Kopfzeile, Seitenzahl oder Eintragung im Inhaltsverzeichnis.
+  // Das anschließende leere Trennblatt vor Vorwort beziehungsweise Abstract bleibt gemäß §2.2 erhalten.
   if sperrvermerk != none {
     sperr.sperrvermerk(
       titel,
@@ -213,29 +238,19 @@
     figure.where(kind: table),
     tabellenverzeichnis,
   )
-  // Nicht von der Richtlinie vorgesehen und deshalb nur bei expliziter
-  // Aktivierung; auch dann erscheint es nur, wenn Quellcode vorhanden ist.
-  verzeichnis-wenn-vorhanden(
-    "Quellcodeverzeichnis",
-    figure.where(kind: "hfu-code"),
-    quellcodeverzeichnis,
-    aktiv: cfg.quellcodeverzeichnis,
-  )
-
   vorspann-kapitel("Abkürzungsverzeichnis", abkuerzungsverzeichnis(abkuerzungen))
 
   // ── 10. Inhaltlicher Teil: arabische Ziffern ab 1 (Tabelle 4) ─────────────
-  // Zuerst auf eine rechte Seite wechseln und erst dort die Nummerierung
-  // zurücksetzen. Andernfalls könnte eine notwendige Füllseite bereits die
-  // arabische Seitenzahl 1 tragen.
+  // Zuerst wird auf eine rechte Seite gewechselt und erst dort die Nummerierung zurückgesetzt.
+  // Andernfalls könnte eine notwendige Füllseite bereits die arabische Seitenzahl 1 tragen.
   auf-rechte-seite()
   set page(numbering: "1")
   counter(page).update(1)
   seitenzahl-neustart()
 
   {
-    // §1.2.3: Hauptkapitel beginnen immer auf der rechten Seite. Diese Regel
-    // gilt nur hier — der Vorspann kennt sie nicht.
+    // §1.2.3: Hauptkapitel beginnen immer auf der rechten Seite.
+    // Diese Regel gilt nur hier; der Vorspann kennt sie nicht.
     show heading.where(level: 1): it => {
       auf-rechte-seite()
       it
@@ -250,14 +265,11 @@
     body
 
     // ── 11. Literaturverzeichnis (§2.9.5) ───────────────────────────────────
-    if quellen != none {
-      unnummeriertes-kapitel("Literaturverzeichnis", {
-        // §2.9.5: zwischen den Quellenangaben 1,5-zeilig, innerhalb einer
-        // Quelle 1-zeilig.
-        set par(leading: cfg.zeile-einfach - 1em, spacing: cfg.zeile - 1em)
-        quellen
-      })
-    }
+    unnummeriertes-kapitel("Literaturverzeichnis", {
+      // §2.9.5 verlangt zwischen den Quellenangaben 1,5-zeiligen Abstand und innerhalb einer Quelle einzeiligen Abstand.
+      set par(leading: cfg.zeile-einfach - 1em, spacing: cfg.zeile - 1em)
+      quellen
+    })
   }
 
   // ── 12. Leeres Trennblatt und Versicherung (§2.11) ────────────────────────
@@ -267,13 +279,13 @@
   // ── 13. Anhang (§2.13) ────────────────────────────────────────────────────
   if anhang != none and anhang.len() > 0 {
     trennblatt()
-    // Überschriften im Anhang tragen keine Kapitelnummern; die Gliederung
-    // erfolgt über die Anhangsbuchstaben.
+    // Überschriften im Anhang tragen keine Kapitelnummern.
+    // Die Gliederung erfolgt über die Anhangsbuchstaben.
     set heading(numbering: none)
     for (i, teil) in anhang.enumerate() {
       let buchstabe = numbering("A", i + 1)
-      // Erst auf die rechte Seite wechseln, dann umnummerieren — sonst trüge
-      // schon die Füllseite davor die Seitenzahlen des Anhangsteils.
+      // Zuerst wird auf die rechte Seite gewechselt und danach umnummeriert.
+      // Andernfalls trüge bereits die vorherige Füllseite die Seitenzahlen des Anhangsteils.
       auf-rechte-seite()
       // Tabelle 4: Seitenzahl nach dem Muster "[Buchstabe]-[Zahl]".
       set page(numbering: (..n) => buchstabe + "-" + str(n.pos().first()))

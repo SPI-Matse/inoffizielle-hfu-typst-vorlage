@@ -1,7 +1,7 @@
-// Inhalts-, Abbildungs-, Tabellen-, Quellcode- und Abkürzungsverzeichnis.
+// Inhalts-, Abbildungs-, Tabellen- und Abkürzungsverzeichnis.
 //
-// Die Überschriften der Verzeichnisse setzt layout.typ; hier steht nur ihr
-// Inhalt. Die Richtlinie schreibt die Überschriften wörtlich vor (§2.5, §2.8).
+// Die Überschriften der Verzeichnisse setzt `layout.typ`; hier steht nur ihr Inhalt.
+// Die Richtlinie schreibt die Überschriften wörtlich vor (§2.5 und §2.8).
 
 #import "config.typ" as cfg
 
@@ -15,22 +15,25 @@
   body
 }
 
-// Tabellen 7/8 und die Beispiele der Richtlinie schreiben Einträge der Form
-// "Abbildung 1: Titel". Typst setzt standardmäßig "Abbildung 1 Titel".
+// Die Tabellen 7 und 8 sowie die Richtlinienbeispiele schreiben Einträge der Form "Abbildung 1: Titel".
+// Typst setzt standardmäßig "Abbildung 1 Titel".
 #let mit-doppelpunkt(body) = {
   show outline.entry: it => {
     let bezeichnung = it.prefix()
-    it.indented(
-      if bezeichnung != none { [#bezeichnung:] },
-      it.inner(),
+    link(
+      it.element.location(),
+      it.indented(
+        if bezeichnung != none { [#bezeichnung:] },
+        it.inner(),
+      ),
     )
   }
   body
 }
 
-// §2.5 und Tabelle 6: alle Überschriften, maximal drei Gliederungsebenen,
-// Hauptkapitel linksbündig, Unterkapitel eingerückt, Seitenzahlen rechtsbündig
-// mit Punkten aufgefüllt (Typst-Standard).
+// §2.5 und Tabelle 6 verlangen alle Überschriften und maximal drei Gliederungsebenen.
+// Hauptkapitel stehen linksbündig und Unterkapitel eingerückt.
+// Typst setzt die Seitenzahlen rechtsbündig und füllt den Abstand mit Punkten.
 #let inhaltsverzeichnis() = verzeichnis-satz(outline(
   title: none,
   depth: cfg.verzeichnis-tiefe,
@@ -49,31 +52,32 @@
   target: figure.where(kind: table),
 )))
 
-// Nicht in der Richtlinie geregelt, analog zu Tabelle 7/8 aufgebaut.
-#let quellcodeverzeichnis() = verzeichnis-satz(mit-doppelpunkt(outline(
-  title: none,
-  target: figure.where(kind: "hfu-code"),
-)))
+// §2.8 verlangt zwei Spalten mit Kurzform und zugehöriger Langform.
+// Alle im Text oder in Beschriftungen verwendeten Abkürzungen werden aufgenommen.
+#let abkuerzungsverzeichnis(abkuerzungen) = context {
+  if abkuerzungen.len() == 0 { return }
 
-// §2.8: "Das Abkürzungsverzeichnis besteht aus zwei Spalten. Die erste Spalte
-// beinhaltet die Abkürzung, die zweite Spalte die zugehörige Erklärung."
-#let abkuerzungsverzeichnis(liste) = context {
-  if liste == none or liste.len() == 0 { return }
+  let verwendet = query(<hfu-abkuerzung-verwendung>).map(element => element.value)
+  for kurz in verwendet {
+    assert(
+      abkuerzungen.any(eintrag => eintrag.kurz == kurz),
+      message: "hfu-vorlage: Die verwendete Abkürzung `" + kurz + "` ist nicht definiert.",
+    )
+  }
 
-  // Nur mit `abk(…)` markierte und damit tatsächlich gesetzte Einträge
-  // aufnehmen. Mehrfachverwendungen ändern das Verzeichnis nicht.
-  let verwendet = query(<hfu-abkuerzung>).map(element => element.value)
-  let sortiert = liste
-    .filter(eintrag => eintrag.at(0) in verwendet)
-    .sorted(key: eintrag => upper(eintrag.at(0)))
+  let sortiert = abkuerzungen
+    .filter(eintrag => eintrag.kurz in verwendet)
+    .sorted(key: eintrag => upper(eintrag.kurz))
 
   if sortiert.len() > 0 {
-    verzeichnis-satz(grid(
+    verzeichnis-satz(table(
       columns: (auto, 1fr),
       column-gutter: 1.5em,
       row-gutter: cfg.verzeichnis-zeile - 1em,
       align: (left, left),
-      ..sortiert.map(eintrag => (eintrag.at(0), eintrag.at(1))).flatten(),
+      stroke: none,
+      inset: 0pt,
+      ..sortiert.map(eintrag => (eintrag.kurz, eintrag.lang)).flatten(),
     ))
   }
 }

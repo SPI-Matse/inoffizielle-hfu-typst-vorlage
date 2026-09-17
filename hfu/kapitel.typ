@@ -1,24 +1,21 @@
 // Kopfzeile, Trennblätter und Kapitelgerüst.
 //
-// Eigenes Modul, damit sowohl layout.typ als auch versicherung.typ darauf
-// zugreifen können, ohne sich gegenseitig zu importieren.
+// Eigenes Modul, damit `layout.typ` und `versicherung.typ` darauf zugreifen können, ohne sich gegenseitig zu importieren.
 
 #import "config.typ" as cfg
 
-// Jedes Kapitel hinterlegt den Text, der ab hier in der Kopfzeile stehen soll.
-// Die Kopfzeile sucht sich davon die letzte Marke auf oder vor der aktuellen
-// Seite. Der Umweg über Metadaten statt über `state` ist bewusst gewählt: er
-// hängt nicht davon ab, in welcher Reihenfolge Typst die Seiten setzt.
+// Jedes Kapitel hinterlegt den Text, der ab dieser Position in der Kopfzeile stehen soll.
+// Die Kopfzeile verwendet die letzte Marke auf oder vor der aktuellen Seite.
+// Metadaten werden bewusst anstelle von `state` verwendet, damit das Ergebnis nicht von Typsts Seitenreihenfolge abhängt.
 #let kopfzeile-marke(inhalt) = [#metadata(inhalt)<hfu-kopf>]
 
-// Wird überall dort gesetzt, wo der Seitenzähler neu beginnt. Die Kopfzeile
-// wird oben auf der Seite gesetzt, der Zähler aber erst im Seiteninhalt
-// zurückgesetzt — ohne diese Marke zeigte die erste Seite eines Abschnitts noch
-// den alten Zählerstand.
+// Diese Marke wird überall gesetzt, wo der Seitenzähler neu beginnt.
+// Die Kopfzeile wird oben auf der Seite gesetzt, der Zähler aber erst im Seiteninhalt zurückgesetzt.
+// Ohne die Marke zeigte die erste Seite eines Abschnitts noch den alten Zählerstand.
 #let seitenzahl-neustart() = [#metadata(none)<hfu-seitenreset>]
 
-// §1.2.5: Hauptkapitelüberschrift stets innen, Seitenzahl stets außen,
-// abgegrenzt durch einen horizontalen Strich.
+// §1.2.5: Die Hauptkapitelüberschrift steht innen und die Seitenzahl außen.
+// Ein horizontaler Strich grenzt die Kopfzeile ab.
 #let kopfzeile() = context {
   let seite = here().page()
 
@@ -36,9 +33,8 @@
 
   set text(size: cfg.groesse.kopfzeile, weight: "bold")
 
-  // Ungerade Seiten liegen rechts, ihr innerer Rand ist links — und umgekehrt.
-  // Die Seitenzahl bekommt nur ihre natürliche Breite, damit lange
-  // Kapitelüberschriften nicht mit ihr kollidieren.
+  // Ungerade Seiten liegen rechts und ihr innerer Rand liegt links; bei geraden Seiten ist es umgekehrt.
+  // Die Seitenzahl bekommt nur ihre natürliche Breite, damit lange Kapitelüberschriften nicht mit ihr kollidieren.
   let (spalten, links, rechts) = if calc.odd(seite) {
     ((1fr, auto), kapitel, nummer)
   } else {
@@ -68,20 +64,14 @@
 
 // §1.2.3: Hauptkapitel beginnen immer auf der rechten Seite.
 //
-// Die dabei entstehende Füllseite trägt Kopfzeile und Seitenzahl — genau wie
-// bei einem Abschnittswechsel "Ungerade Seite" in Word.
-//
-// Sie stattdessen als echte Leerseite zu setzen, würde bedeuten, ihre
-// Notwendigkeit über `context here().page()` selbst zu bestimmen. Jede solche
-// Entscheidung verschiebt aber die Seitenzahlen aller folgenden Kapitel und
-// damit deren Entscheidung; Typsts Layout-Iteration konvergiert dann in einem
-// vollständigen Dokument nicht mehr zuverlässig. `pagebreak(to: "odd")`
-// überlässt die Parität dem Satzsystem und ist deterministisch.
+// Die dabei entstehende Füllseite trägt wie bei einem Word-Abschnittswechsel auf eine ungerade Seite Kopfzeile und Seitenzahl.
+// Eine vollständig leere Füllseite müsste ihre Notwendigkeit selbst über `context here().page()` bestimmen.
+// Diese Entscheidung würde die Seitenzahlen der nachfolgenden Kapitel und damit die nächste Paritätsentscheidung verschieben.
+// `pagebreak(to: "odd")` überlässt die Parität dem Satzsystem und bleibt dadurch deterministisch.
 #let auf-rechte-seite() = pagebreak(to: "odd", weak: true)
 
-// Kapitel des Vorspanns (Vorwort, Abstract, Verzeichnisse). Sie tragen keine
-// Kapitelnummer und beginnen — anders als Hauptkapitel — auf beliebiger Seite;
-// die Rechtsseitenpflicht aus §1.2.3 bezieht sich auf Hauptkapitel.
+// Kapitel des Vorspanns wie Vorwort, Abstract und Verzeichnisse tragen keine Kapitelnummer.
+// Sie beginnen anders als Hauptkapitel auf einer beliebigen Seite, da sich die Rechtsseitenpflicht aus §1.2.3 auf Hauptkapitel bezieht.
 #let vorspann-kapitel(titel, body, im-inhaltsverzeichnis: true) = {
   pagebreak(weak: true)
   heading(level: 1, numbering: none, outlined: im-inhaltsverzeichnis, titel)
@@ -89,10 +79,9 @@
   body
 }
 
-// Kapitel ohne Nummer im arabisch nummerierten Teil (Literaturverzeichnis,
-// Versicherung). Standardmäßig auf der rechten Seite beginnend; die englische
-// Fassung der Versicherung folgt laut Richtlinie (Seiten 13/14) direkt auf die
-// deutsche und setzt deshalb `rechte-seite: false`.
+// Kapitel ohne Nummer im arabisch nummerierten Teil beginnen standardmäßig auf der rechten Seite.
+// Die englische Fassung der Versicherung folgt laut den Richtlinienseiten 13 und 14 direkt auf die deutsche.
+// Sie setzt deshalb `rechte-seite: false`.
 #let unnummeriertes-kapitel(titel, body, rechte-seite: true) = {
   if rechte-seite { auf-rechte-seite() } else { pagebreak(weak: true) }
   heading(level: 1, numbering: none, outlined: true, titel)

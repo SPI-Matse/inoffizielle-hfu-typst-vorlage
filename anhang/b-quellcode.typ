@@ -3,7 +3,7 @@
 Umfangreicher Quellcode gehört laut §2.13 in den Anhang.
 
 #quellcode-datei(
-  "/code/beispiel.py",
+  path("/code/beispiel.py"),
   lang: "python",
   caption: [Vollständiger Quellcode des Beispielprogramms],
 )

@@ -1,8 +1,7 @@
 // Titelblatt nach Tabelle 5 und Abbildung 4 der Richtlinie.
 //
-// Die Richtlinie schreibt die Formatierung wörtlich vor ("Die Formatierung des
-// Titelblattes muss der Vorlage entsprechen"), inklusive der Beschriftungen
-// "Vorgelegt am" und "Vorgelegt von".
+// Die Richtlinie schreibt vor: "Die Formatierung des Titelblattes muss der Vorlage entsprechen."
+// Dazu gehören die Beschriftungen "Vorgelegt am" und "Vorgelegt von".
 
 #import "config.typ" as cfg
 
@@ -28,8 +27,8 @@
     vorgelegt-am
   }
 
-  // Angaben zur Person: die erste Zeile steht neben "Vorgelegt von",
-  // die weiteren darunter in derselben Spalte (Abbildung 4).
+  // Die erste Zeile der Personendaten steht neben "Vorgelegt von".
+  // Die weiteren Zeilen stehen gemäß Abbildung 4 darunter in derselben Spalte.
   let person = (
     autor.at("name", default: none),
     autor.at("matrikelnummer", default: none),
@@ -50,7 +49,11 @@
 
   page(header: none, footer: none, numbering: none, {
     if cfg.logo != none {
-      align(right, image(cfg.logo, height: cfg.logo-hoehe))
+      align(right, image(
+        cfg.logo,
+        height: cfg.logo-hoehe,
+        alt: "Logo der Hochschule Furtwangen",
+      ))
     }
 
     v(2cm)
