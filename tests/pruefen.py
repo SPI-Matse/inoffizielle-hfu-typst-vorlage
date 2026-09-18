@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Prüft das erzeugte PDF gegen die Vorgaben der Richtlinie.
 
 Die Richtlinie stellt in §1 fest, dass Abweichungen im Bachelorstudium unzulässig sind.
